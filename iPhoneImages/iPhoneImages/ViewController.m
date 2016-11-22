@@ -10,6 +10,9 @@
 
 @interface ViewController ()
 
+@property (weak, nonatomic) IBOutlet UIImageView *iPhoneImageView;
+
+
 @end
 
 @implementation ViewController
@@ -25,6 +28,20 @@
     
     NSURLSessionDownloadTask *downloadTask = [session downloadTaskWithURL:url completionHandler:^(NSURL * _Nullable location, NSURLResponse * _Nullable response, NSError * _Nullable error)
     {
+    
+        if (error) { // 1
+            // Handle the error
+            NSLog(@"error: %@", error.localizedDescription);
+            return;
+        }
+        
+        NSData *data = [NSData dataWithContentsOfURL:location];
+        
+        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+            // This will run on the main queue
+            UIImage *image = [UIImage imageWithData:data]; // 2
+            self.iPhoneImageView.image = image; // 4
+        }];
         
     }]; // 4
     
